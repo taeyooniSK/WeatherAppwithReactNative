@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { LinearGradient } from 'expo';
+import { Feather } from '@expo/vector-icons';
 
 
 export default class Weather extends Component {
@@ -8,11 +9,11 @@ export default class Weather extends Component {
         return (
         <LinearGradient colors={['#00C6FB', '#005BEA']} style={styles.container}>
           <View style={styles.upper}>
-            <Text>Icon here!</Text>
+            <Feather color={"white"} size={144} name={"cloud-rain"}/>
             <Text style={styles.temperature}>35ºC</Text>
           </View>
           <View style={styles.lower}>
-            <Text style={styles.title}>Raining like a Mother Angel</Text>
+            <Text style={styles.title}>Raining like <Image source={require('./images/spooky.png')}/></Text>
             <Text style={styles.subtitle}>Look outside!</Text>
           </View>
         </LinearGradient>
