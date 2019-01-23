@@ -1,20 +1,22 @@
 import React, { Component }from 'react';
-import { StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image, StatusBar } from 'react-native';
 import Weather from './components/Weather';
+
+const API_KEY = 'b566d43d8ed66cef9b8baf0bb788978e';
 
 export default class App extends Component {
   state = {
     isLoaded : false,
-    error : null
+    error : null,
+    temperature: null,
+    name: null
   }
 
   componentDidMount(){
     navigator.geolocation.getCurrentPosition( 
       position => {
-      this.setState({
-        // error: 'Something went wrong' for testing
-        isLoaded : true
-      })
+      this._getWeather(position.coords.latitude, position.coords.longitude)
+  
     },
      error => {
         this.setState({
@@ -24,13 +26,24 @@ export default class App extends Component {
     )    
   }
 
+  _getWeather(lat, long){
+    fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=metric&APPID=${API_KEY}`)
+    .then(response => response.json())
+    .then(json => {
+       this.setState({
+        temperature : json.main.temp,
+        name: json.weather[0].main,
+        isLoaded : true
+      })
+    })
+  }
   render() {
-    const { isLoaded, error } = this.state;
+    const { isLoaded, error, temperature, name} = this.state;
     return (
-     <View style={styles.container}>
+      <View style={styles.container}>
         <StatusBar hidden={true}/>
         {isLoaded ? (
-          <Weather />
+          <Weather weathername={name} temp={temperature}/>
         ) : (
           <View style={styles.loading}>
             <Text style={styles.loadingText}>Getting the angelic weather</Text> 
@@ -48,7 +61,8 @@ const styles = StyleSheet.create({
     backgroundColor : '#fff'
   },
   errorText:{
-    color:"red",
+    color: 'red',
+    backgroundColor: 'transparent',
     marginBottom: 40
   },
   loading:{
@@ -59,6 +73,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 38,
-    marginBottom:100,
+    marginBottom:40,
   }
-});
+})
